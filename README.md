@@ -112,7 +112,7 @@ Este servicio permite gestionar las calificaciones de los estudiantes en el sist
 3. Ejecuta el servidor:
 
    ```bash
-   uvicorn app.main:app --reload
+   uvicorn app.main:app --reload --port 8003
    ```
 
 ## Pruebas
@@ -128,6 +128,10 @@ pytest app/tests/test_calificaciones.py
 * **FastAPI**: Framework principal.
 * **SQLAlchemy**: ORM para manejar la base de datos.
 * **Pytest**: Framework para pruebas unitarias.
+
+## Documentación interactiva
+
+Accede a la documentación Swagger en [http://localhost:8003/docs](http://localhost:8003/docs) o ReDoc en [http://localhost:8003/redoc](http://localhost:8003/redoc).
 
 ## Contacto
 
