@@ -16,3 +16,13 @@
 ### Corregido
 
 * Validación de decimales en el campo `nota` para evitar errores de formato.
+
+## [1.0.2] - 2025-06-10
+
+### Agregado
+- Se agrega el puerto 8003 al README.md
+- Se agrega sección de documentación interactiva
+
+### Corregido
+
+- Se elimina FKs de modelo.
