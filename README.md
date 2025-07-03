@@ -2,13 +2,17 @@
 
 ## Descripción
 
-Este servicio permite gestionar las calificaciones de los estudiantes en el sistema académico. Proporciona funcionalidades para crear, obtener y listar calificaciones, permitiendo un seguimiento detallado del desempeño estudiantil.
+Este servicio gestiona las calificaciones de los estudiantes en el sistema académico. Permite crear, obtener y listar calificaciones, así como consultar calificaciones por estudiante o por asignatura. Antes de registrar o consultar calificaciones por estudiante o asignatura, el servicio valida la existencia de estos recursos en los servicios externos correspondientes.
+
+---
 
 ## Endpoints
 
 ### Crear una calificación
 
 **POST** `/calificaciones/`
+
+Valida que el `id_estudiante` y el `id_asignatura` existan en los servicios externos antes de registrar la calificación.
 
 #### Request Body
 
@@ -38,6 +42,22 @@ Este servicio permite gestionar las calificaciones de los estudiantes en el sist
 }
 ```
 
+**Status:** 400 Bad Request
+
+```json
+{
+  "detail": "El estudiante no existe"
+}
+```
+o
+```json
+{
+  "detail": "La asignatura no existe"
+}
+```
+
+---
+
 ### Obtener una calificación por ID
 
 **GET** `/calificaciones/{id_calificacion}`
@@ -66,6 +86,8 @@ Este servicio permite gestionar las calificaciones de los estudiantes en el sist
 }
 ```
 
+---
+
 ### Listar todas las calificaciones
 
 **GET** `/calificaciones/`
@@ -84,54 +106,125 @@ Este servicio permite gestionar las calificaciones de los estudiantes en el sist
     "nota": 4.5,
     "observaciones": "Excelente rendimiento",
     "fecha_registro": "2025-06-09T10:00:00"
-  },
-  {
-    "id_calificacion": 2,
-    "id_estudiante": 2,
-    "id_asignatura": 2,
-    "periodo": "2025-1",
-    "nota": 3.8,
-    "observaciones": "Buen desempeño",
-    "fecha_registro": "2025-06-09T10:30:00"
   }
 ]
 ```
 
+---
+
+### Listar calificaciones por estudiante
+
+**GET** `/calificaciones/por_estudiante/{id_estudiante}`
+
+Valida que el estudiante exista en el servicio externo antes de devolver las calificaciones.
+
+#### Response
+
+**Status:** 200 OK
+
+```json
+[
+  {
+    "id_calificacion": 1,
+    "id_estudiante": 1,
+    "id_asignatura": 1,
+    "periodo": "2025-1",
+    "nota": 4.5,
+    "observaciones": "Excelente rendimiento",
+    "fecha_registro": "2025-06-09T10:00:00"
+  }
+]
+```
+
+**Status:** 400 Bad Request
+
+```json
+{
+  "detail": "El estudiante no existe"
+}
+```
+
+---
+
+### Listar calificaciones por asignatura
+
+**GET** `/calificaciones/por_asignatura/{id_asignatura}`
+
+Valida que la asignatura exista en el servicio externo antes de devolver las calificaciones.
+
+#### Response
+
+**Status:** 200 OK
+
+```json
+[
+  {
+    "id_calificacion": 1,
+    "id_estudiante": 1,
+    "id_asignatura": 1,
+    "periodo": "2025-1",
+    "nota": 4.5,
+    "observaciones": "Excelente rendimiento",
+    "fecha_registro": "2025-06-09T10:00:00"
+  }
+]
+```
+
+**Status:** 400 Bad Request
+
+```json
+{
+  "detail": "La asignatura no existe"
+}
+```
+
+---
+
+## Validaciones externas
+
+- **id_estudiante**: Se valida contra el servicio externo de estudiantes antes de registrar o consultar calificaciones.
+- **id_asignatura**: Se valida contra el servicio externo de asignaturas antes de registrar o consultar calificaciones.
+
+---
+
 ## Instalación
 
-1. Asegúrate de tener el entorno configurado:
+1. Instala las dependencias:
 
    ```bash
    pip install -r requirements.txt
    ```
+
 2. Configura la base de datos en el archivo `.env`:
 
    ```env
-   DATABASE_URL="mysql+pymysql://user:password@host:port/database"
+   DATABASE_URL="mysql+pymysql://user:password@host:port/calificaciones_db"
    ```
+
 3. Ejecuta el servidor:
 
    ```bash
    uvicorn app.main:app --reload --port 8003
    ```
 
+---
+
 ## Pruebas
 
 Para ejecutar las pruebas unitarias:
 
 ```bash
-pytest app/tests/test_calificaciones.py
+pytest app/test/test_calificaciones.py
 ```
 
-## Dependencias
-
-* **FastAPI**: Framework principal.
-* **SQLAlchemy**: ORM para manejar la base de datos.
-* **Pytest**: Framework para pruebas unitarias.
+---
 
 ## Documentación interactiva
 
-Accede a la documentación Swagger en [http://localhost:8003/docs](http://localhost:8003/docs) o ReDoc en [http://localhost:8003/redoc](http://localhost:8003/redoc).
+Accede a la documentación Swagger en [http://localhost:8003/docs](http://localhost:8003/docs)  
+o ReDoc en [http://localhost:8003/redoc](http://localhost:8003/redoc).
+
+---
 
 ## Contacto
 
