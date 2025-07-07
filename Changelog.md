@@ -27,7 +27,7 @@
 
 - Se elimina FKs de modelo.
 
-## [1.1.0] - 2025-07-02
+## [1.0.3] - 2025-07-02
 
 ### Agregado
 - Endpoints adicionales:
@@ -47,5 +47,10 @@
 ### Corregido
 - Se asegura la correcta inicialización y conexión con la base de datos `calificaciones_db` usando SQLAlchemy y modelos sincronizados con la estructura real de la tabla.
 - Se corrige la validación de existencia de estudiante y asignatura en todos los endpoints relevantes.
+
+## [1.0.4] - 2025-07-06
+
+### Corregido
+- Se hacen correciones a archivos: config.py, main.py, routers/calificaciones.py, services/calificaciones.py y validaciones_externas.py para realizar correctamente las operaciones del servicio y consultas a los otros servicios.
 
 ---

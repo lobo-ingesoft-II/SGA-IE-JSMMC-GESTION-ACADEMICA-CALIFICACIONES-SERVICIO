@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from app.routers import calificaciones
 from app.db import init_db, test_connection
-from app.models import calificaciones
 
 app = FastAPI(title="Calificaciones API")
 

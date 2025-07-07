@@ -1,7 +1,7 @@
-
 from sqlalchemy.orm import Session
-from app.models.calificaciones import Calificacion, CalificacionCreate
+from app.models.calificaciones import Calificacion
 from app.services.validaciones_externas import validar_estudiante, validar_asignatura
+from app.schemas.calificaciones import CalificacionCreate  # Asegúrate de tener este esquema
 
 def create_calificacion(db: Session, calificacion: CalificacionCreate):
     validar_estudiante(calificacion.id_estudiante)
@@ -23,4 +23,3 @@ def get_calificaciones_por_estudiante(db: Session, id_estudiante: int):
 
 def get_calificaciones_por_asignatura(db: Session, id_asignatura: int):
     return db.query(Calificacion).filter(Calificacion.id_asignatura == id_asignatura).all()
-

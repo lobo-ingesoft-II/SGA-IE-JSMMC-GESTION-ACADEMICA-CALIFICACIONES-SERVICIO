@@ -4,10 +4,8 @@ from app.schemas.calificaciones import CalificacionCreate, CalificacionResponse
 from app.services.calificaciones import create_calificacion, get_calificacion, list_calificaciones
 from app.db import SessionLocal
 from app.services.validaciones_externas import validar_estudiante, validar_asignatura
-from app.services.calificaciones import (
-    create_calificacion, get_calificacion, list_calificaciones,
-    get_calificaciones_por_estudiante, get_calificaciones_por_asignatura
-)
+from app.services.calificaciones import create_calificacion, get_calificacion, list_calificaciones,get_calificaciones_por_estudiante, get_calificaciones_por_asignatura
+
 router = APIRouter()
 
 def get_db():
