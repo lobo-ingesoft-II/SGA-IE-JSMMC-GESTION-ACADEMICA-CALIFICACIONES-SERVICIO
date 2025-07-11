@@ -8,7 +8,9 @@ class Calificacion(Base):
     id_estudiante = Column(Integer, nullable=False)
     id_asignatura = Column(Integer, nullable=False)
     periodo = Column(String(20), nullable=False)
-    nota = Column(DECIMAL(4, 2), nullable=False)
+    nota1 = Column(DECIMAL(4, 2), nullable=False)
+    nota2 = Column(DECIMAL(4, 2), nullable=False)
+    nota3 = Column(DECIMAL(4, 2), nullable=False)
     observaciones = Column(String(255))
     fecha_registro = Column(DateTime, nullable=False, server_default=func.now())
 

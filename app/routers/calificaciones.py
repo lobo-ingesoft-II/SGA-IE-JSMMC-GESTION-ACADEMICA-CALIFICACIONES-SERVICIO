@@ -1,10 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.schemas.calificaciones import CalificacionCreate, CalificacionResponse
-from app.services.calificaciones import create_calificacion, get_calificacion, list_calificaciones
+from app.schemas.calificaciones import CalificacionCreate, CalificacionResponse, CalificacionUpdate, CalificacionPartialUpdate
+from app.services.calificaciones import (
+    create_calificacion,
+    get_calificacion,
+    list_calificaciones,
+    get_calificaciones_por_estudiante,
+    get_calificaciones_por_asignatura,
+    update_calificacion,
+    partial_update_calificacion,
+)
 from app.db import SessionLocal
 from app.services.validaciones_externas import validar_estudiante, validar_asignatura
-from app.services.calificaciones import create_calificacion, get_calificacion, list_calificaciones,get_calificaciones_por_estudiante, get_calificaciones_por_asignatura
 
 router = APIRouter()
 
@@ -49,3 +56,17 @@ def list_by_estudiante(id_estudiante: int, db: Session = Depends(get_db)):
 def list_by_asignatura(id_asignatura: int, db: Session = Depends(get_db)):
     validar_asignatura(id_asignatura)
     return get_calificaciones_por_asignatura(db, id_asignatura)
+
+@router.put("/{id_calificacion}", response_model=CalificacionResponse)
+def update(id_calificacion: int, calificacion: CalificacionUpdate, db: Session = Depends(get_db)):
+    db_calificacion = update_calificacion(db, id_calificacion, calificacion)
+    if not db_calificacion:
+        raise HTTPException(status_code=404, detail="Calificacion not found")
+    return db_calificacion
+
+@router.patch("/{id_calificacion}", response_model=CalificacionResponse)
+def partial_update(id_calificacion: int, calificacion: CalificacionPartialUpdate, db: Session = Depends(get_db)):
+    db_calificacion = partial_update_calificacion(db, id_calificacion, calificacion)
+    if not db_calificacion:
+        raise HTTPException(status_code=404, detail="Calificacion not found")
+    return db_calificacion
