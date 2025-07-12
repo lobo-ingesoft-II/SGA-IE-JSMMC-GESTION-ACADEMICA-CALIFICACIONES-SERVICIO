@@ -204,7 +204,7 @@ Valida que la asignatura exista en el servicio externo antes de devolver las cal
 3. Ejecuta el servidor:
 
    ```bash
-   uvicorn app.main:app --reload --port 8006
+   uvicorn app.main:app --reload --port 8003
    ```
 
 ---
