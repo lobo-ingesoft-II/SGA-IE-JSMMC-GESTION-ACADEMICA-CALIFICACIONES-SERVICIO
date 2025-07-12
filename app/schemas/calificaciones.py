@@ -13,6 +13,22 @@ class CalificacionBase(BaseModel):
 class CalificacionCreate(CalificacionBase):
     pass
 
+# Nuevo schema para crear calificaciones con IDs específicos
+class CalificacionCreateForStudent(BaseModel):
+    periodo: str
+    nota1: float
+    nota2: float
+    nota3: float
+    observaciones: str | None = None
+
+# Schema para actualizar notas específicas por periodo
+class CalificacionUpdateForStudent(BaseModel):
+    periodo: str
+    nota1: float | None = None
+    nota2: float | None = None
+    nota3: float | None = None
+    observaciones: str | None = None
+
 class CalificacionUpdate(BaseModel):
     nota1: float
     nota2: float
@@ -30,4 +46,4 @@ class CalificacionResponse(CalificacionBase):
     fecha_registro: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

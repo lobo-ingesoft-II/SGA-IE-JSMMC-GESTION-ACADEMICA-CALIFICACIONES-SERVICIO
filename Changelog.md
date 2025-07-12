@@ -53,20 +53,4 @@
 ### Corregido
 - Se hacen correciones a archivos: config.py, main.py, routers/calificaciones.py, services/calificaciones.py y validaciones_externas.py para realizar correctamente las operaciones del servicio y consultas a los otros servicios.
 
-## [1.0.5] - 2025-07-11
-
-### Agregado
-- Se modifica el modelo y la tabla `calificaciones` para soportar tres notas (`nota1`, `nota2`, `nota3`) en vez de una sola.
-- Se agrega restricción para que solo exista una calificación por estudiante, asignatura y periodo.
-- Nuevos endpoints **PUT** y **PATCH** para actualización total y parcial de calificaciones.
-- Nuevos esquemas Pydantic: `CalificacionUpdate` y `CalificacionPartialUpdate`.
-- Nuevas funciones de servicio: `update_calificacion` y `partial_update_calificacion`.
-
-### Mejorado
-- Ajuste de los endpoints y servicios para trabajar con el nuevo modelo de calificaciones de tres notas.
-- Actualización de los inserts de ejemplo y scripts SQL para reflejar la nueva estructura de la tabla `calificaciones`.
-- Documentación actualizada en el `README.md` y en la documentación interactiva para reflejar los cambios en el modelo y los nuevos endpoints.
-
-### Corregido
-- Se corrigen errores en los scripts de migración de base de datos para soportar la nueva estructura de la tabla `calificaciones`.
-- Se asegura la correcta validación y manejo de errores en los nuevos endpoints y funciones de actualización de calificaciones.
+---
