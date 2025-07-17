@@ -209,12 +209,29 @@ Valida que la asignatura exista en el servicio externo antes de devolver las cal
 
 ---
 
-## Pruebas
+## Observabilidad y métricas
 
-Para ejecutar las pruebas unitarias:
+El servicio expone métricas Prometheus para todos los endpoints, permitiendo monitoreo de:
+- Total de peticiones HTTP por endpoint y método
+- Latencia de cada petición
+- Total de errores HTTP (status >= 400)
 
+**Endpoint de métricas Prometheus:**
+```
+GET /calificaciones/custom_metrics
+```
+
+Puedes consultar estas métricas desde Prometheus o navegando directamente al endpoint.
+
+## Pruebas unitarias
+
+Las pruebas unitarias se encuentran en `app/test/test_calificaciones.py` y cubren:
+- Casos exitosos y de error para todos los endpoints principales
+- Validaciones de datos y respuestas esperadas
+
+Para ejecutar los tests:
 ```bash
-pytest app/test/test_calificaciones.py
+pytest app/test/
 ```
 
 ---

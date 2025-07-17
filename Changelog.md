@@ -53,4 +53,21 @@
 ### Corregido
 - Se hacen correciones a archivos: config.py, main.py, routers/calificaciones.py, services/calificaciones.py y validaciones_externas.py para realizar correctamente las operaciones del servicio y consultas a los otros servicios.
 
----
+## [1.0.5] - 2025-07-17
+### Agregado
+- Implementación del middleware de observabilidad con Prometheus mediante decorador `@prometheus_metrics`.
+- Métricas expuestas en el endpoint `/metrics` (en lugar de `/calificaciones/custom_metrics`).
+- Métricas recolectadas: total de peticiones HTTP, latencia por método y endpoint.
+- Nuevas pruebas unitarias en `app/tests/test_calificaciones.py` para validar observabilidad, errores HTTP y nuevos escenarios.
+- Separación clara de routers en `app/routers/calificaciones.py` siguiendo arquitectura SOFEA.
+- Documentación extendida para el endpoint `/calificaciones/por_estudiante/{id_estudiante}` y `/calificaciones/por_asignatura/{id_asignatura}`.
+
+### Cambiado
+- Refactor de los endpoints para utilizar `async def`, permitiendo integración fluida con observabilidad y validaciones externas asíncronas.
+- Mejoras en los docstrings, ejemplos Swagger, y respuestas de error detalladas.
+- Se optimizó el manejo de errores 404 y validaciones externas para una experiencia más clara del consumidor API.
+
+### Corregido
+- Corrección en enrutamiento y parámetros de consulta en `routers/calificaciones.py`.
+- Ajustes menores en `config.py` y `main.py` para garantizar inicialización correcta del middleware Prometheus y routers desacoplados.
+
