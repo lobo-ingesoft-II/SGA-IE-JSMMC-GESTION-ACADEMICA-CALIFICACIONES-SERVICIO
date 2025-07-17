@@ -17,3 +17,11 @@ def test_connection():
             print("Connection successful:", result.scalar())
     except Exception as e:
         print("Connection failed:", e)
+
+def get_db():
+    """Función para obtener una sesión de base de datos para inyección de dependencias"""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
