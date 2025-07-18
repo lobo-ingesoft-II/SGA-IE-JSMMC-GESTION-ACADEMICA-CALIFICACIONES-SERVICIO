@@ -15,22 +15,43 @@ from app.services.calificaciones import (
 )
 from app.db import SessionLocal
 from app.services.validaciones_externas import validar_estudiante, validar_asignatura
-from app.observabilidad.observabilidad import prometheus_metrics, REQUEST_COUNT, REQUEST_LATENCY, ERROR_COUNT
-from prometheus_client import CollectorRegistry, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+import time
 from starlette.responses import Response
+from prometheus_client import CollectorRegistry, generate_latest
+
 
 
 router = APIRouter()
 
+# Metricas 
+REQUEST_COUNT_CALIFICACIONES_ROUTERS = Counter(
+    "http_requests_total", 
+    "TOTAL PETICIONES HTTP router-asignaturas",
+    ["method", "endpoint"]
+)
+
+REQUEST_LATENCY_CALIFICACIONES_ROUTERS = Histogram(
+    "http_request_duration_seconds", 
+    "DURACION DE LAS PETICIONES router-asinaturas",
+    ["method", "endpoint"],
+    buckets=[0.1, 0.3, 1.0, 2.5, 5.0, 10.0]  
+)
+
+# 3. Errores por endpoint
+ERROR_COUNT_CALIFICACIONES_ROUTERS = Counter(
+    "http_request_errors_total",
+    "TOTAL ERRORES HTTP (status >= 400)",
+    ["endpoint", "method", "status_code"]
+)
 @router.get("/custom_metrics", tags=["Observabilidad"])
 def custom_metrics():
-    """
-    Expone las métricas personalizadas de Prometheus para el servicio de calificaciones.
-    """
     registry = CollectorRegistry()
-    registry.register(REQUEST_COUNT)
-    registry.register(REQUEST_LATENCY)
-    registry.register(ERROR_COUNT)
+    # Registrar métricas de asignaturas
+    registry.register(REQUEST_COUNT_CALIFICACIONES_ROUTERS)
+    registry.register(REQUEST_LATENCY_CALIFICACIONES_ROUTERS)
+    registry.register(ERROR_COUNT_CALIFICACIONES_ROUTERS)
+     
     return Response(generate_latest(registry), media_type=CONTENT_TYPE_LATEST)
 def get_db():
     db = SessionLocal()
@@ -40,8 +61,7 @@ def get_db():
         db.close()
 
 @router.post("/", response_model=CalificacionResponse)
-@prometheus_metrics("create_calificacion")
-async def create(calificacion: CalificacionCreate, db: Session = Depends(get_db), request: Request = None):
+def create(calificacion: CalificacionCreate, db: Session = Depends(get_db), request: Request = None):
     return create_calificacion(db, calificacion)
 
 @router.post(
@@ -50,8 +70,7 @@ async def create(calificacion: CalificacionCreate, db: Session = Depends(get_db)
     summary="Crear o actualizar calificación para estudiante en asignatura específica",
     description="Crea una nueva calificación o actualiza una existente para un estudiante específico en una asignatura específica. Si ya existe una calificación para el mismo periodo, se actualizarán las notas. Valida que tanto el estudiante como la asignatura existan en el sistema."
 )
-@prometheus_metrics("create_calificacion_for_student")
-async def create_for_student_and_subject(
+def create_for_student_and_subject(
     id_estudiante: int, 
     id_asignatura: int, 
     calificacion: CalificacionCreateForStudent, 
@@ -66,8 +85,7 @@ async def create_for_student_and_subject(
     summary="Actualizar notas específicas de un estudiante en una asignatura",
     description="Actualiza solo las notas específicas (nota1, nota2, nota3) que el profesor ha modificado para un estudiante en una asignatura y periodo específico. Perfecto para interfaces donde el profesor edita notas individuales en una tabla."
 )
-@prometheus_metrics("update_calificacion_for_student")
-async def update_student_grades(
+def update_student_grades(
     id_estudiante: int, 
     id_asignatura: int, 
     calificacion: CalificacionUpdateForStudent, 
@@ -77,16 +95,14 @@ async def update_student_grades(
     return update_calificacion_for_student(db, id_estudiante, id_asignatura, calificacion)
 
 @router.get("/{id_calificacion}", response_model=CalificacionResponse)
-@prometheus_metrics("get_calificacion")
-async def get(id_calificacion: int, db: Session = Depends(get_db), request: Request = None):
+def get(id_calificacion: int, db: Session = Depends(get_db), request: Request = None):
     db_calificacion = get_calificacion(db, id_calificacion)
     if not db_calificacion:
         raise HTTPException(status_code=404, detail="Calificacion not found")
     return db_calificacion
 
 @router.get("/", response_model=list[CalificacionResponse])
-@prometheus_metrics("list_calificaciones")
-async def list_all(db: Session = Depends(get_db), request: Request = None):
+def list_all(db: Session = Depends(get_db), request: Request = None):
     return list_calificaciones(db)
 
 @router.get(
@@ -95,8 +111,7 @@ async def list_all(db: Session = Depends(get_db), request: Request = None):
     summary="Obtener calificaciones de estudiante en asignatura específica",
     description="Devuelve todas las calificaciones de un estudiante específico en una asignatura específica. Valida que tanto el estudiante como la asignatura existan en el sistema."
 )
-@prometheus_metrics("get_calificaciones_por_estudiante_y_asignatura")
-async def get_by_student_and_subject(
+def get_by_student_and_subject(
     id_estudiante: int, 
     id_asignatura: int, 
     db: Session = Depends(get_db),
@@ -112,8 +127,7 @@ async def get_by_student_and_subject(
     summary="Listar calificaciones por estudiante",
     description="Devuelve todas las calificaciones de un estudiante validando su existencia en el sistema externo."
 )
-@prometheus_metrics("get_calificaciones_por_estudiante")
-async def list_by_estudiante(id_estudiante: int, db: Session = Depends(get_db), request: Request = None):
+def list_by_estudiante(id_estudiante: int, db: Session = Depends(get_db), request: Request = None):
     validar_estudiante(id_estudiante)
     return get_calificaciones_por_estudiante(db, id_estudiante)
 
@@ -123,22 +137,19 @@ async def list_by_estudiante(id_estudiante: int, db: Session = Depends(get_db), 
     summary="Listar calificaciones por asignatura",
     description="Devuelve todas las calificaciones de una asignatura validando su existencia en el sistema externo."
 )
-@prometheus_metrics("get_calificaciones_por_asignatura")
-async def list_by_asignatura(id_asignatura: int, db: Session = Depends(get_db), request: Request = None):
+def list_by_asignatura(id_asignatura: int, db: Session = Depends(get_db), request: Request = None):
     validar_asignatura(id_asignatura)
     return get_calificaciones_por_asignatura(db, id_asignatura)
 
 @router.put("/{id_calificacion}", response_model=CalificacionResponse)
-@prometheus_metrics("update_calificacion")
-async def update(id_calificacion: int, calificacion: CalificacionUpdate, db: Session = Depends(get_db), request: Request = None):
+def update(id_calificacion: int, calificacion: CalificacionUpdate, db: Session = Depends(get_db), request: Request = None):
     db_calificacion = update_calificacion(db, id_calificacion, calificacion)
     if not db_calificacion:
         raise HTTPException(status_code=404, detail="Calificacion not found")
     return db_calificacion
 
 @router.patch("/{id_calificacion}", response_model=CalificacionResponse)
-@prometheus_metrics("partial_update_calificacion")
-async def partial_update(id_calificacion: int, calificacion: CalificacionPartialUpdate, db: Session = Depends(get_db), request: Request = None):
+def partial_update(id_calificacion: int, calificacion: CalificacionPartialUpdate, db: Session = Depends(get_db), request: Request = None):
     db_calificacion = partial_update_calificacion(db, id_calificacion, calificacion)
     if not db_calificacion:
         raise HTTPException(status_code=404, detail="Calificacion not found")

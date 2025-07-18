@@ -71,3 +71,15 @@
 - Corrección en enrutamiento y parámetros de consulta en `routers/calificaciones.py`.
 - Ajustes menores en `config.py` y `main.py` para garantizar inicialización correcta del middleware Prometheus y routers desacoplados.
 
+## [1.0.6] - 2025-07-17
+### Cambiado
+- Se refactorizó la implementación de observabilidad eliminando la carpeta `observabilidad/` y moviendo la funcionalidad directamente a los routers y al archivo main.py.
+- Se implementaron métricas de Prometheus directamente en el router de asistencia (`routers/calificaciones.py`).
+- Se crearon contadores específicos para monitorear peticiones, latencia y errores HTTP.
+- Se agregó un middleware de métricas en `main.py` para capturar automáticamente todas las peticiones HTTP.
+- Se creó un nuevo endpoint `/calificaciones/custom_metrics` para exponer las métricas de Prometheus específicas del servicio de asistencia.
+
+### Mejorado
+- Mejor integración de las métricas con los endpoints existentes.
+- Simplificación de la arquitectura al eliminar la capa adicional de observabilidad.
+- Monitoreo más detallado con métricas específicas para errores por código de estado.
