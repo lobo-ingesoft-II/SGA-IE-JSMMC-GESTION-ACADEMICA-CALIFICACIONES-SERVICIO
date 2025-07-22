@@ -12,25 +12,13 @@ from app.routers.calificaciones import REQUEST_COUNT_CALIFICACIONES_ROUTERS, REQ
 app = FastAPI(title="Calificaciones API")
 
 # Configuración de CORS
+#Configuración de CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # React (puerto por defecto)
-        "http://localhost:3001",  # React (puerto alternativo)
-        "http://localhost:5173",  # Vite (puerto por defecto)
-        "http://localhost:5174",  # Vite (puerto alternativo)
-        "http://localhost:8080",  # Vue.js
-        "http://localhost:4200",  # Angular
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:8080",
-        "http://127.0.0.1:4200",
-        # Agrega aquí la URL de tu frontend en producción
-        # "https://tu-dominio-frontend.com"
-    ],
+    allow_origins=["*"],  # Permitir todas las orígenes
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Permitir todos los métodos HTTP
+    allow_headers=["*"],  # Permitir todos los encabezados
 )
 
 @app.on_event("startup")

@@ -2,8 +2,8 @@ import requests
 from fastapi import HTTPException
 import logging
 
-ASIGNATURAS_API_URL = "http://127.0.0.1:8001/asignaturas/"
-ESTUDIANTES_API_URL = "http://127.0.0.1:8005/estudiantes/"
+ASIGNATURAS_API_URL = "http://sga-asignaturas-service:8001/asignaturas/"
+ESTUDIANTES_API_URL = "http://sga-estudiantes-service:8005/estudiantes/"
 
 def validar_asignatura(id_asignatura: int):
     try:
